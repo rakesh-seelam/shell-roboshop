@@ -28,31 +28,31 @@ do
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
-        RECORD_NAME="$DOMAIN_NAME.rakesh.bond" #mongodb.rakes.bond
+        RECORD_NAME="$instance.rakesh.bond" #mongodb.rakesh.bond
     fi 
     echo "IP address = $IP"
 
     aws route53 change-resource-record-sets \
     --hosted-zone-id $HOST_ID \
     --change-batch 
-        '{
-            "Comment": "Creating a new A record",
-            "Changes": [
+    '{
+        "Comment": "Creating a new A record",
+        "Changes": [
+            {
+            "Action": "CREATE",
+            "ResourceRecordSet": {
+                "Name": "'$RECORD_NAME'",
+                "Type": "A",
+                "TTL": 1,
+                "ResourceRecords": [
                 {
-                "Action": "CREATE",
-                "ResourceRecordSet": {
-                    "Name": "'$RECORD_NAME'",
-                    "Type": "A",
-                    "TTL": 1,
-                    "ResourceRecords": [
-                    {
-                        "Value": "'$IP'"
-                    }
-                    ]
+                    "Value": "'$IP'"
                 }
-                }
-            ]
+                ]
             }
-        '
-        echo "record updated for $instance"
+            }
+        ]
+    }'
+    
+    echo "record updated for $instance"
 done
