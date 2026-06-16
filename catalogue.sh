@@ -59,10 +59,10 @@ VALIDATE $? "Moving to App directory"
 rm -rf /app/*
 VALIDATE $? "Removing existing code"
 
-unzip /tmp/catalogue.zip &>>$LOGS_FILE
+unzip /tmp/catalogue.zip &>>$LOG_FILE
 VALIDATE $? "Unzipping catalogue code"
 
-npm install &>>$LOGS_FILE
+npm install &>>$LOG_FILE
 VALIDATE $? "Installing Dependencies"
 
 cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
@@ -71,12 +71,12 @@ VALIDATE $? "Copying catalagoue service"
 systemctl daemon-reload
 VALIDATE $? "Reloading Daemon"
 
-systemctl enable catalogue &>>$LOGS_FILE
+systemctl enable catalogue &>>$LOG_FILE
 systemctl start catalogue
 VALIDATE $? "Enabling and Starting Catalogue"
 
 cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
-dnf install mongodb-mongosh -y &>>$LOGS_FILE
+dnf install mongodb-mongosh -y &>>$LOG_FILE
 
 INDEX=$(mongosh --host $MONGODB_HOST --quiet  --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
 
