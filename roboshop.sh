@@ -41,17 +41,18 @@ do
                 {
                 "Action": "CREATE",
                 "ResourceRecordSet": {
-                    "Name": "$DOMAIN_NAME",
+                    "Name": "'$RECORD_NAME'",
                     "Type": "A",
                     "TTL": 1,
                     "ResourceRecords": [
                     {
-                        "Value": "$IP"
+                        "Value": "'$IP'"
                     }
                     ]
                 }
                 }
             ]
-            }'
+            }
+        '
         echo "record updated for $instance"
 done
