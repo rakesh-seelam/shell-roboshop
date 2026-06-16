@@ -1,7 +1,7 @@
 #! /bin/bash
 
 USER_ID=$(id -u)
-LOG_FOLDER="/var/logs/shell-roboshop"
+LOG_FOLDER="/var/log/shell-roboshop"
 LOG_FILE="$LOG_FOLDER/$0.log"
 
 mkdir -p $LOG_FOLDER
@@ -20,7 +20,7 @@ VALIDATE(){
     fi
 }
 
-cp /home/ec2-user/shell-roboshop/mongo.repo /etc/yum.repos.d/mongo.repo
+cp mongo.repo /etc/yum.repos.d/mongo.repo
 VALIDATE $? "Copying mongo Repo"
 
 dnf install mongodb-org -y  &>>$LOG_FILE
