@@ -1,7 +1,7 @@
 #! /bin/bash
 
 USER_ID=$(id -u)
-LOG_FOLDER="/etc/var/logs/shell-roboshop"
+LOG_FOLDER="/var/logs/shell-roboshop"
 LOG_FILE="$LOG_FOLDER/$0.log"
 
 
