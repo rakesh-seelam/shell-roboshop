@@ -34,8 +34,8 @@ do
 
     aws route53 change-resource-record-sets \
     --hosted-zone-id $HOST_ID \
-    --change-batch 
-    '{
+    --change-batch '
+    {
         "Comment": "Creating a new A record",
         "Changes": [
             {
@@ -52,7 +52,7 @@ do
             }
             }
         ]
-    }'
-    
+    }
+    '
     echo "record updated for $instance"
 done
