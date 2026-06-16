@@ -18,10 +18,10 @@ fi
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-      echo -e "$R $2: FAILURE $N" | tee -a $LOG_FILE
+      echo -e "$2: $R FAILURE $N" | tee -a $LOG_FILE
       exit 1
     else
-      echo -e "$G $2: Success $N" | tee -a $LOG_FILE
+      echo -e "$2: $G Success $N" | tee -a $LOG_FILE
     fi
 }
 
@@ -56,10 +56,13 @@ VALIDATE $? "Downloading Catalogue Code"
 cd /app
 VALIDATE $? "Moving to App directory"
 
-unzip /tmp/catalogue.zip
+rm -rf /app/*
+VALIDATE $? "Removing existing code"
+
+unzip /tmp/catalogue.zip &>>$LOGS_FILE
 VALIDATE $? "Unzipping catalogue code"
 
-npm install
+npm install &>>$LOGS_FILE
 VALIDATE $? "Installing Dependencies"
 
 cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
@@ -68,7 +71,21 @@ VALIDATE $? "Copying catalagoue service"
 systemctl daemon-reload
 VALIDATE $? "Reloading Daemon"
 
-systemctl enable catalogue 
+systemctl enable catalogue &>>$LOGS_FILE
 systemctl start catalogue
 VALIDATE $? "Enabling and Starting Catalogue"
 
+cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
+dnf install mongodb-mongosh -y &>>$LOGS_FILE
+
+INDEX=$(mongosh --host $MONGODB_HOST --quiet  --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+
+if [ $INDEX -le 0 ]; then
+    mongosh --host $MONGODB_HOST </app/db/master-data.js
+    VALIDATE $? "Loading products"
+else
+    echo -e "Products already loaded ... $Y SKIPPING $N"
+fi
+
+systemctl restart catalogue
+VALIDATE $? "Restarting catalogue"
