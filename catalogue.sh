@@ -25,14 +25,19 @@ VALIDATE(){
     fi
 }
 
-dnf module disable nodejs -y 
-VALIDATE $? "Disabling nodejs"
+dnf list intsalled | grep nodejs &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    dnf module disable nodejs -y &>>$LOG_FILE
+    VALIDATE $? "Disabling nodejs"
 
-dnf module enable nodejs:20 -y &>>$LOG_FILE
-VALIDATE $? "Enabling nodejs-20"
+    dnf module enable nodejs:20 -y &>>$LOG_FILE
+    VALIDATE $? "Enabling nodejs-20"
 
-dnf install nodejs -y &>>$LOG_FILE
-VALIDATE $? "Installing nodejs"
+    dnf install nodejs -y &>>$LOG_FILE
+    VALIDATE $? "Installing nodejs"
+else 
+  echo -e "nodejs is already installed $Y SKIPPING $N"
+fi
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
@@ -42,7 +47,7 @@ else
    echo -e "Roboshop User already exists $Y SKIPPING $N"
 fi
 
-mkdir /app 
+mkdir -p /app 
 VALIDATE $? "Creating temporary directory"
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zi
