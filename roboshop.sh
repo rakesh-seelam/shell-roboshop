@@ -2,6 +2,8 @@
 
 SG_ID="sg-0978bd3e9e6d67ee8"
 AMI_ID="ami-0220d79f3f480ecf5"
+HOST_ID="Z09038562YAIT9N88QB69"
+DOMAIN_NAME="rakesh.bond"
 
 for instance in $@
 do
@@ -19,12 +21,37 @@ do
             --query 'Reservations[].Instances[].PublicIpAddress' \
             --output text
         )
+        RECORD_NAME="rakesh.bond" #frontend name
     else
         IP=$(aws ec2 describe-instances \
             --instance-ids $INSTANCEID \
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
+        RECORD_NAME="$DOMAIN_NAME.rakesh.bond" #mongodb.rakes.bond
     fi 
     echo "IP address = $IP"
+
+    aws route53 change-resource-record-sets \
+    --hosted-zone-id $HOST_ID \
+    --change-batch 
+        '{
+            "Comment": "Creating a new A record",
+            "Changes": [
+                {
+                "Action": "CREATE",
+                "ResourceRecordSet": {
+                    "Name": "$DOMAIN_NAME",
+                    "Type": "A",
+                    "TTL": 1,
+                    "ResourceRecords": [
+                    {
+                        "Value": "$IP"
+                    }
+                    ]
+                }
+                }
+            ]
+            }'
+        echo "record updated for $instance"
 done
