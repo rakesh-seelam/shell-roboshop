@@ -26,12 +26,17 @@ VALIDATE(){
     fi
 }
 
-dnf module disable nodejs -y &>>$LOG_FILE
-dnf module enable nodejs:20 -y &>>$LOG_FILE
-VALIDATE $? "Enabling nodejs-20"
+dnf list installed | grep nodejs &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    dnf module disable nodejs -y &>>$LOG_FILE
+    dnf module enable nodejs:20 -y &>>$LOG_FILE
+    VALIDATE $? "Enabling nodejs-20"
 
-dnf install nodejs -y &>>$LOG_FILE
-VALIDATE $? "Installing nodejs"
+    dnf install nodejs -y &>>$LOG_FILE
+    VALIDATE $? "Installing nodejs"
+else
+    echo -e "Nodejs already installed $Y SKIPPING $N"
+fi
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
@@ -46,15 +51,17 @@ VALIDATE $? "Creating App Directory"
 
 curl -L -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
 cd /app 
+VALIDATE $? "Downloading User Code"
+
+rm -rf /app/*
+VALIDATE $? "Removing existing code"
+
 unzip /tmp/user.zip &>>$LOG_FILE
 VALIDATE $? "Downloading and Unzipping user"
 
 cd /app 
 npm install &>>$LOG_FILE
 VALIDATE $? "Installing Dependencies"
-
-rm -rf app/*
-VALIDATE $? "Removing existing code"
 
 cp $SCRIPT_DIR/user.service /etc/systemd/system/user.service
 VALIDATE $? "Copying user.service"
