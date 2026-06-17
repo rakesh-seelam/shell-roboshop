@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 USER_ID=$(id -u)
 LOG_FOLDER="/var/log/shell-roboshop"
@@ -24,9 +24,9 @@ VALIDATE(){
     fi
 }
 
-dnf list installed | grep mysqld
+dnf list installed | grep mysql &>>$LOG_FILE
 
-if [ $? ne 0 ]; then
+if [ $? -ne 0 ]; then
     dnf install mysql-server -y &>>$LOG_FILE
     VALIDATE $? "installing Mysql server"
 else
