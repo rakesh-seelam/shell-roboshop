@@ -26,12 +26,13 @@ VALIDATE(){
     fi
 }
 
-dnf install maven -y
+dnf install maven -y &>>$LOG_FILE
 VALIDATE $? "Installing Maven"
 
-id roboshop
+id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
   useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+  VALIDATE $? "Creating User"
 else
   echo "user already exists $Y SKIPPING $N "
 fi
@@ -59,7 +60,7 @@ mv target/shipping-1.0.jar shipping.jar
 VALIDATE $? "Moving and Renaming shipping"
 
 cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service
-VALIDATE $? "Created systemctl service
+VALIDATE $? "Created systemctl service"
 
 dnf install mysql -y &>>$LOG_FILE
 VALIDATE $? "Installing mysql"
