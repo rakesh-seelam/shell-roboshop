@@ -24,12 +24,14 @@ VALIDATE(){
     fi
 }
 
-dnf install mysql-server -y
+dnf install mysql-server -y &>>$LOG_FILE
 VALIDATE $? "installing Mysql server"
 
-systemctl enable mysqld
+systemctl enable mysqld &>>$LOG_FILE
 systemctl start mysqld  
 VALIDATE $? "enabling and starting  mysqld"
 
-mysql_secure_installation --set-root-pass read -s PASSWORD
+MYSQL_ROOT_PASSWORD=read -s -p "Enter MySQL Root Password: " 
+
+mysql_secure_installation --set-root-pass $MYSQL_ROOT_PASSWORD
 VALIDATE $? "Setup root password"
