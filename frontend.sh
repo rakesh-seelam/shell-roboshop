@@ -27,8 +27,8 @@ VALIDATE $? "listing Nginx"
 dnf module disable nginx -y
 VALIDATE $? "Disabling default Nginx"
 
-dnf module enable nginx:1.24 -y &>>$LOG_FILE
-dnf install nginx -y
+dnf module enable nginx:1.24 -y 
+dnf install nginx -y &>>$LOG_FILE
 VALIDATE $? "Installing Nginx:1.24"
 
 systemctl enable nginx &>>$LOG_FILE
