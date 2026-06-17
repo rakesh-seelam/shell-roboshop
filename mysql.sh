@@ -24,8 +24,14 @@ VALIDATE(){
     fi
 }
 
-dnf install mysql-server -y &>>$LOG_FILE
-VALIDATE $? "installing Mysql server"
+dnf list installed | grep mysqld
+
+if [ $? ne 0 ]; then
+    dnf install mysql-server -y &>>$LOG_FILE
+    VALIDATE $? "installing Mysql server"
+else
+   echo -e "MySQL Already installed $Y SKIPPING $N "
+fi
 
 systemctl enable mysqld &>>$LOG_FILE
 systemctl start mysqld  
