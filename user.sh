@@ -27,11 +27,11 @@ VALIDATE(){
 }
 
 dnf module disable nodejs -y &>>$LOG_FILE
-dnf module enable nodejs:20 -y
+dnf module enable nodejs:20 -y &>>$LOG_FILE
 VALIDATE $? "Enabling nodejs-20"
 
 dnf install nodejs -y &>>$LOG_FILE
-VALIDATE $? "Installing nodejs
+VALIDATE $? "Installing nodejs"
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
