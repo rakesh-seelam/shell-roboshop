@@ -7,7 +7,7 @@ R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
-SCRIPT_DIR=$PWD
+#SCRIPT_DIR=$PWD
 #MONGODB_HOST=mongodb.rakesh.bond
 
 mkdir -p $LOG_FOLDER
@@ -26,12 +26,17 @@ VALIDATE(){
     fi
 }
 
-dnf module disable redis -y &>>$LOG_FILE
-dnf module enable redis:7 -y
-dnf install redis -y &>>$LOG_FILE
-VALIDATE $? "Enabling and installing Redis-7"
+dnf list installed | grep redis &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    dnf module disable redis -y &>>$LOG_FILE
+    dnf module enable redis:7 -y
+    dnf install redis -y &>>$LOG_FILE
+    VALIDATE $? "Enabling and installing Redis-7"
+else
+    echo "Redis already Installed $Y SKIPPING $N "
+fi 
 
-sed -i -e 127.0.0.1/0.0.0.0 -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf
+sed -i -e '127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf
 VALIDATE $? "Allowing remote connections"
 
 systemctl enable redis &>>$LOG_FILE
