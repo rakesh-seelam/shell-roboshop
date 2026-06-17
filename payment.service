@@ -5,11 +5,11 @@ Description=Payment Service
 User=root
 WorkingDirectory=/app
 // highlight-start
-Environment=CART_HOST=<CART-SERVER-IPADDRESS>
+Environment=CART_HOST=cart.rakesh.bond
 Environment=CART_PORT=8080
-Environment=USER_HOST=<USER-SERVER-IPADDRESS>
+Environment=USER_HOST=user.rakesh.bond
 Environment=USER_PORT=8080
-Environment=AMQP_HOST=<RABBITMQ-SERVER-IPADDRESS>
+Environment=AMQP_HOST=rabbitmq.rakesh.bond
 // highlight-end
 Environment=AMQP_USER=roboshop
 Environment=AMQP_PASS=roboshop123
