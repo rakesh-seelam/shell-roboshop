@@ -25,7 +25,7 @@ VALIDATE(){
     fi
 }
 
-dnf install python3 gcc python3-devel -y
+dnf install python3 gcc python3-devel -y &>>$LOG_FILE
 VALIDATE $? "Installed Python"
 
 id roboshop &>>$LOG_FILE
